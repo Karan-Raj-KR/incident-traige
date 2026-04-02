@@ -1,0 +1,114 @@
+{
+  "scenario_id": "task2_cascade",
+  "difficulty": "medium",
+  "description": "A cascading failure is impacting multiple services. Downstream services are firing critical alerts, but the root cause appears to lie deeper within the stack. Investigate the alerts and metrics to find and remediate the root service failure.",
+  "services": [
+    "auth-service",
+    "order-service",
+    "notification-service"
+  ],
+  "system_topology": {
+    "auth-service": [],
+    "order-service": [
+      "auth-service"
+    ],
+    "notification-service": [
+      "order-service"
+    ]
+  },
+  "initial_alerts": [
+    {
+      "alert_id": "ALT-2001",
+      "service": "notification-service",
+      "severity": "CRITICAL",
+      "message": "Notification dispatch queue backed up - 100% failure rate processing events",
+      "timestamp": "2026-04-02T14:15:00Z"
+    },
+    {
+      "alert_id": "ALT-2002",
+      "service": "order-service",
+      "severity": "WARNING",
+      "message": "Elevated latency and SLA breach on checkout endpoints",
+      "timestamp": "2026-04-02T14:15:45Z"
+    },
+    {
+      "alert_id": "ALT-2003",
+      "service": "auth-service",
+      "severity": "CRITICAL",
+      "message": "Authentication error rate exceeds 25% threshold",
+      "timestamp": "2026-04-02T14:17:10Z"
+    }
+  ],
+  "initial_logs": [
+    {
+      "timestamp": "2026-04-02T14:10:05Z",
+      "service": "auth-service",
+      "level": "INFO",
+      "message": "Shutting down v2.3.0. Starting deployment of auth-service v2.3.1..."
+    },
+    {
+      "timestamp": "2026-04-02T14:10:20Z",
+      "service": "auth-service",
+      "level": "INFO",
+      "message": "Server started on port 9090."
+    },
+    {
+      "timestamp": "2026-04-02T14:10:25Z",
+      "service": "auth-service",
+      "level": "ERROR",
+      "message": "Uncaught Exception in JWT validation module: TypeError: undefined is not a function."
+    },
+    {
+      "timestamp": "2026-04-02T14:14:10Z",
+      "service": "order-service",
+      "level": "ERROR",
+      "message": "AuthException: Failed to validate token via auth-service. Error 500."
+    },
+    {
+      "timestamp": "2026-04-02T14:14:45Z",
+      "service": "notification-service",
+      "level": "ERROR",
+      "message": "Failed to fetch order details from order-service. Connection closed."
+    },
+    {
+      "timestamp": "2026-04-02T14:15:30Z",
+      "service": "auth-service",
+      "level": "ERROR",
+      "message": "TypeError: undefined is not a function handling route /api/v1/verify"
+    }
+  ],
+  "initial_metrics": {
+    "auth-service": {
+      "cpu_usage": 35.0,
+      "memory_usage": 40.0,
+      "latency_ms": 20,
+      "request_rate": 500,
+      "error_rate": 45.0
+    },
+    "order-service": {
+      "cpu_usage": 50.0,
+      "memory_usage": 55.0,
+      "latency_ms": 1500,
+      "request_rate": 300,
+      "error_rate": 35.0
+    },
+    "notification-service": {
+      "cpu_usage": 25.0,
+      "memory_usage": 30.0,
+      "latency_ms": 3000,
+      "request_rate": 150,
+      "error_rate": 100.0
+    }
+  },
+  "ground_truth": {
+    "root_cause": "bad deploy on auth-service v2.3.1",
+    "affected_services": [
+      "auth-service",
+      "order-service",
+      "notification-service"
+    ],
+    "remediation": "rollback auth-service to v2.3.0",
+    "severity": "P1"
+  },
+  "max_steps": 20
+}
