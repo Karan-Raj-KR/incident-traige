@@ -1,0 +1,247 @@
+{
+  "scenario_id": "task3_noisy",
+  "difficulty": "hard",
+  "description": "Intermittent failures are being reported across the platform. Multiple alerting systems are firing with seemingly unrelated issues spanning the frontend, caching layers, and background services. Cut through the noise, identify the true root cause, and resolve the platform instability.",
+  "services": [
+    "database",
+    "cache",
+    "prometheus",
+    "auth-service",
+    "user-profile-service",
+    "product-catalog",
+    "search-service",
+    "payment-api",
+    "order-service",
+    "frontend"
+  ],
+  "system_topology": {
+    "database": [],
+    "cache": [],
+    "prometheus": [],
+    "auth-service": ["database"],
+    "user-profile-service": ["auth-service", "database"],
+    "product-catalog": ["database", "cache"],
+    "search-service": ["product-catalog"],
+    "payment-api": ["auth-service"],
+    "order-service": ["payment-api", "product-catalog", "database"],
+    "frontend": ["order-service", "user-profile-service", "search-service"]
+  },
+  "initial_alerts": [
+    {
+      "alert_id": "ALT-3001",
+      "service": "cache",
+      "severity": "WARNING",
+      "message": "Redis eviction rate elevated - keyspace optimization recommended",
+      "timestamp": "2026-04-02T13:05:00Z"
+    },
+    {
+      "alert_id": "ALT-3002",
+      "service": "prometheus",
+      "severity": "WARNING",
+      "message": "Expected rule evaluation delay - scraping interval exceeded",
+      "timestamp": "2026-04-02T13:10:00Z"
+    },
+    {
+      "alert_id": "ALT-3003",
+      "service": "user-profile-service",
+      "severity": "WARNING",
+      "message": "Disk space utilization at 86% on volume /var/logs",
+      "timestamp": "2026-04-02T13:11:00Z"
+    },
+    {
+      "alert_id": "ALT-3004",
+      "service": "search-service",
+      "severity": "CRITICAL",
+      "message": "Stale ElasticSearch index sync across cluster nodes",
+      "timestamp": "2026-04-02T13:15:30Z"
+    },
+    {
+      "alert_id": "ALT-3005",
+      "service": "product-catalog",
+      "severity": "WARNING",
+      "message": "JVM memory pressure detected - frequent Minor GC",
+      "timestamp": "2026-04-02T13:16:15Z"
+    },
+    {
+      "alert_id": "ALT-3006",
+      "service": "order-service",
+      "severity": "WARNING",
+      "message": "STALE: Async queue depth exceeded 5,000 items (Alert unresolved from 2 days ago)",
+      "timestamp": "2026-03-31T09:00:00Z"
+    },
+    {
+      "alert_id": "ALT-3007",
+      "service": "payment-api",
+      "severity": "WARNING",
+      "message": "3rd party payment gateway STAGING endpoint unreachable",
+      "timestamp": "2026-04-02T13:18:00Z"
+    },
+    {
+      "alert_id": "ALT-3008",
+      "service": "frontend",
+      "severity": "INFO",
+      "message": "UI Build v5.5.9 deployed successfully",
+      "timestamp": "2026-04-02T13:20:00Z"
+    },
+    {
+      "alert_id": "ALT-3009",
+      "service": "frontend",
+      "severity": "WARNING",
+      "message": "Transient network blip detected by client-side telemetry",
+      "timestamp": "2026-04-02T13:21:00Z"
+    },
+    {
+      "alert_id": "ALT-3010",
+      "service": "auth-service",
+      "severity": "WARNING",
+      "message": "Internal service TLS certificates expiring in 30 days",
+      "timestamp": "2026-04-02T13:22:00Z"
+    },
+    {
+      "alert_id": "ALT-3011",
+      "service": "cache",
+      "severity": "INFO",
+      "message": "Scaling down replica set from 5 to 3 due to low traffic",
+      "timestamp": "2026-04-02T13:25:00Z"
+    },
+    {
+      "alert_id": "ALT-3012",
+      "service": "prometheus",
+      "severity": "INFO",
+      "message": "Prometheus configuration reloaded dynamically",
+      "timestamp": "2026-04-02T13:30:00Z"
+    },
+    {
+      "alert_id": "ALT-3013",
+      "service": "frontend",
+      "severity": "WARNING",
+      "message": "Higher than average bounce rate on promotional landing page",
+      "timestamp": "2026-04-02T13:35:00Z"
+    },
+    {
+      "alert_id": "ALT-3014",
+      "service": "database",
+      "severity": "INFO",
+      "message": "Automated weekly snapshot scheduled to begin in 4 hours",
+      "timestamp": "2026-04-02T14:00:00Z"
+    },
+    {
+      "alert_id": "ALT-3015",
+      "service": "database",
+      "severity": "WARNING",
+      "message": "Slow query execution > 500ms detected on reads",
+      "timestamp": "2026-04-02T14:15:30Z"
+    },
+    {
+      "alert_id": "ALT-3016",
+      "service": "order-service",
+      "severity": "WARNING",
+      "message": "Connection acquisition timeout in HikariCP pool",
+      "timestamp": "2026-04-02T14:17:15Z"
+    }
+  ],
+  "initial_logs": [
+    {
+       "timestamp": "2026-04-02T13:15:20Z",
+       "service": "search-service",
+       "level": "ERROR",
+       "message": "Elastic cluster node disconnected. Shard replica promotion pending."
+    },
+    {
+       "timestamp": "2026-04-02T14:00:00Z",
+       "service": "frontend",
+       "level": "WARN",
+       "message": "Fetch API failed during routine heartbeat. Client retrying..."
+    },
+    {
+       "timestamp": "2026-04-02T14:05:00Z",
+       "service": "user-profile-service",
+       "level": "WARN",
+       "message": "Disk usage threshold 85% exceeded on /var/logs/user-profile. Rotating logs..."
+    },
+    {
+       "timestamp": "2026-04-02T14:10:15Z",
+       "service": "database",
+       "level": "INFO",
+       "message": "Applying config changes from infrastructure repository..."
+    },
+    {
+       "timestamp": "2026-04-02T14:10:16Z",
+       "service": "database",
+       "level": "INFO",
+       "message": "Config parameter max_connections changed from 200 to 20"
+    },
+    {
+       "timestamp": "2026-04-02T14:12:00Z",
+       "service": "product-catalog",
+       "level": "INFO",
+       "message": "GC pause time 120ms. Minor collection completed."
+    },
+    {
+       "timestamp": "2026-04-02T14:15:25Z",
+       "service": "database",
+       "level": "WARN",
+       "message": "FATAL: remaining connection slots are reserved for non-replication superuser connections"
+    },
+    {
+       "timestamp": "2026-04-02T14:16:05Z",
+       "service": "order-service",
+       "level": "WARN",
+       "message": "HikariPool-1 - Connection is not available, request timed out after 3000ms."
+    },
+    {
+       "timestamp": "2026-04-02T14:16:30Z",
+       "service": "payment-api",
+       "level": "ERROR",
+       "message": "Unable to connect to staging DB. Ignoring due to staging environment policy."
+    }
+  ],
+  "initial_metrics": {
+    "database": {
+      "cpu_usage": 15.0,
+      "memory_usage": 20.0,
+      "latency_ms": 650,
+      "request_rate": 20,
+      "error_rate": 0.0
+    },
+    "cache": {
+      "cpu_usage": 10.0,
+      "memory_usage": 90.0,
+      "latency_ms": 2,
+      "request_rate": 5000,
+      "error_rate": 0.0
+    },
+    "order-service": {
+      "cpu_usage": 35.0,
+      "memory_usage": 45.0,
+      "latency_ms": 3500,
+      "request_rate": 80,
+      "error_rate": 8.5
+    },
+    "auth-service": {
+      "cpu_usage": 20.0,
+      "memory_usage": 30.0,
+      "latency_ms": 1500,
+      "request_rate": 200,
+      "error_rate": 3.0
+    },
+    "frontend": {
+      "cpu_usage": 5.0,
+      "memory_usage": 15.0,
+      "latency_ms": 200,
+      "request_rate": 1200,
+      "error_rate": 1.5
+    }
+  },
+  "ground_truth": {
+    "root_cause": "database max_connections reduced in config change",
+    "affected_services": [
+      "database",
+      "payment-api",
+      "order-service"
+    ],
+    "remediation": "rollback database config",
+    "severity": "P1"
+  },
+  "max_steps": 25
+}
