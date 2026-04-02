@@ -1,0 +1,93 @@
+{
+  "scenario_id": "task1_simple",
+  "difficulty": "easy",
+  "description": "The payment-api has suddenly stopped processing requests. Customers are unable to complete their orders. Immediate investigation is required to restore the service.",
+  "services": [
+    "payment-api",
+    "order-service",
+    "notification-service"
+  ],
+  "system_topology": {
+    "payment-api": [],
+    "order-service": [
+      "payment-api"
+    ],
+    "notification-service": [
+      "order-service"
+    ]
+  },
+  "initial_alerts": [
+    {
+      "alert_id": "ALT-1001",
+      "service": "payment-api",
+      "severity": "CRITICAL",
+      "message": "payment-api health check failed - Unresponsive",
+      "timestamp": "2026-04-02T13:50:00Z"
+    },
+    {
+      "alert_id": "ALT-1002",
+      "service": "order-service",
+      "severity": "WARNING",
+      "message": "High latency detected communicating with payment-api",
+      "timestamp": "2026-04-02T13:51:30Z"
+    }
+  ],
+  "initial_logs": [
+    {
+      "timestamp": "2026-04-02T13:48:12Z",
+      "service": "payment-api",
+      "level": "INFO",
+      "message": "Processing batch payment request. Initiating garbage collection..."
+    },
+    {
+      "timestamp": "2026-04-02T13:49:15Z",
+      "service": "payment-api",
+      "level": "ERROR",
+      "message": "java.lang.OutOfMemoryError: Java heap space. Unable to allocate 1048576 bytes."
+    },
+    {
+      "timestamp": "2026-04-02T13:49:16Z",
+      "service": "payment-api",
+      "level": "FATAL",
+      "message": "Process halted due to OutOfMemoryError."
+    },
+    {
+      "timestamp": "2026-04-02T13:51:30Z",
+      "service": "order-service",
+      "level": "ERROR",
+      "message": "ConnectionTimeoutException: Unable to reach payment-api over port 8080."
+    }
+  ],
+  "initial_metrics": {
+    "payment-api": {
+      "cpu_usage": 95.5,
+      "memory_usage": 98.2,
+      "latency_ms": 5000,
+      "request_rate": 0,
+      "error_rate": 100.0
+    },
+    "order-service": {
+      "cpu_usage": 45.0,
+      "memory_usage": 50.0,
+      "latency_ms": 2500,
+      "request_rate": 150,
+      "error_rate": 12.5
+    },
+    "notification-service": {
+      "cpu_usage": 20.0,
+      "memory_usage": 35.0,
+      "latency_ms": 50,
+      "request_rate": 200,
+      "error_rate": 0.0
+    }
+  },
+  "ground_truth": {
+    "root_cause": "payment-api OutOfMemoryError",
+    "affected_services": [
+      "payment-api"
+    ],
+    "remediation": "restart payment-api",
+    "severity": "P2"
+  },
+  "max_steps": 15
+}
