@@ -1,0 +1,6 @@
+spec_version: 1
+name: incident-triage-env
+type: environment
+runtime: docker
+app: incident_triage_env.server.app:app
+port: 8000
